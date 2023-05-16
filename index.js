@@ -11,10 +11,9 @@ const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.DirectMessages,
-    IntentsBitField.Flags.MessageContent,
+    //IntentsBitField.Flags.DirectMessages,
     IntentsBitField.Flags.GuildMessageReactions,
-    IntentsBitField.Flags.GuildMembers,
+    IntentsBitField.Flags.MessageContent,
   ],
   partials: [Partials.Channel],
 })
