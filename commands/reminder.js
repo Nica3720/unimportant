@@ -1,20 +1,54 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const {Client, Collection, Events, GatewayIntentBits} = require('discord.js');
-const { token } = require('./config.json');
-const client = new Client ({intents: [GatewayIntentBits.Guilds]});
-client.commands = new Collection();
-
-
-
-const {CommandType} = require("wokcommands");
+const {CommandType} = require('wokcommands')
 
 module.exports = {
-    description: "Test if the Bot is online :D",
-    type: CommandType.BOTH,
-    callback: (interaction) => {
-        return {
-        content: "Yeeet - ich lebe :squid:",
-        }
-},
+    description: "Set a reminder!",
+    type: CommandType.SLASH,
+    options: [
+        {
+            name: 'time',
+            description: 'the time when you want to be remembered',
+            type: 3,
+            required: true,
+        },
+        {
+            name: 'channel',
+            description: 'the channel in which the reminder will be send',
+            type: 3,
+            required: false,
+        },
+        {
+            name: 'message',
+            description: 'the content you want to be reminded of',
+            type: 3,
+            required: false,
+        },        
+        {
+            name: 'date',
+            description: 'the date you want to be remembered',
+            type: 3,
+            required: false,
+        },
+        {
+            name: 'user',
+            description: 'the person you want to remember',
+            type: 3,
+            required: false,
+        },
+        {
+            name: 'interval',
+            description: 'repeating the reminder command',
+            type: 3,
+            required: false,
+        },
+    ],
+    callback: ({ interaction, args }) => {
+        //Botaktion
+        const time = args[0]
+        const channel = args[1]
+        const message = args[2]
+        const date = args[3]
+        const user = args[4]
+        const interval = args[5]
+        interaction.reply(`**time:** ${time} \n**channel:** ${channel} \n**message:** ${message} \n**date:** ${date} \n**user:** ${user} \n**interval:** ${interval}`)
+    }
 }
