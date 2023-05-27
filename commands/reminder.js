@@ -8,7 +8,13 @@ module.exports = {
             name: 'time',
             description: 'the time when you want to be remembered',
             type: 3,
-            required: true,
+            required: false,
+        },
+        {
+            name: 'after',
+            description: 'when do you want to be remembered?',
+            type: 3,
+            required: false,
         },
         {
             name: 'channel',
@@ -41,14 +47,19 @@ module.exports = {
             required: false,
         },
     ],
+
     callback: ({ interaction, args }) => {
         //Botaktion
         const time = args[0]
-        const channel = args[1]
-        const message = args[2]
-        const date = args[3]
-        const user = args[4]
-        const interval = args[5]
-        interaction.reply(`**time:** ${time} \n**channel:** ${channel} \n**message:** ${message} \n**date:** ${date} \n**user:** ${user} \n**interval:** ${interval}`)
+        const after = args[1]
+        const channel = args[2]
+        const message = args[3]
+        const date = args[4]
+        const user = args[5]
+        const interval = args[6]
+
+        setTimeout(() => {
+            interaction.reply(`Es sind ${time} Minuten vergangen!\nDenke daran: "${message}"!`)
+            }, {time}/1000/60 )
     }
 }
