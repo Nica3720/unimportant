@@ -1,5 +1,12 @@
 const {CommandType} = require('wokcommands')
 
+function formatMinutes(milliseconds) {
+    if (!milliseconds) return 'Ungültige Eingabe'
+    let seconds = Math.floor(milliseconds / 1000) % 60
+    let minutes = Math.floor(milliseconds / 60000)
+    return `${minutes.toString()}:${seconds.toString().padStart(2, '0')} min`
+  }
+
 module.exports = {
     description: "Set a reminder!",
     type: CommandType.SLASH,
@@ -63,9 +70,9 @@ module.exports = {
             setTimeout(() => {
             message.channel.send(`Erinnerung: ${reminder}`)
             }, after);
-            message.channel.send(`Erinnerung gesetzt in: ${time / 1000/60} Minuten.`);
+            message.channel.send(`Erinnerung gesetzt in: ${after / 1000/60} Minuten.`);
         } else {
-            message.channel.send('! Ungültige Eingabe.');
+            message.channel.send(`! Ungültige Eingabe.`);
         }
     }
 }
