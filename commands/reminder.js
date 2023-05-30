@@ -51,15 +51,21 @@ module.exports = {
     callback: ({ interaction, args }) => {
         //Botaktion
         const time = args[0]
-        const after = args[1]
+        const after = parseInt(args[1], 10) * 1000; // Convert time to milliseconds
         const channel = args[2]
         const message = args[3]
         const date = args[4]
         const user = args[5]
         const interval = args[6]
+        const reminder = args.slice(1).join(' ');
 
-        setTimeout(() => {
-            interaction.reply(`Es sind ${time} Minuten vergangen!\nDenke daran: "${message}"!`)
-            }, {time}/1000/60 )
+        if (!isNaN(after) && reminder) {
+            setTimeout(() => {
+            message.channel.send(`Erinnerung: ${reminder}`)
+            }, after);
+            message.channel.send(`Erinnerung gesetzt in: ${time / 1000/60} Minuten.`);
+        } else {
+            message.channel.send('! Ungültige Eingabe.');
+        }
     }
 }
