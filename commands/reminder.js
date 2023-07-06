@@ -20,7 +20,7 @@ module.exports = {
         {
             name: 'after',
             description: 'when do you want to be remembered?',
-            type: 3,
+            type: 10,
             required: false,
         },
         {
@@ -44,7 +44,7 @@ module.exports = {
         {
             name: 'user',
             description: 'the person you want to remember',
-            type: 3,
+            type: 6,
             required: false,
         },
         {
@@ -54,25 +54,29 @@ module.exports = {
             required: false,
         },
     ],
+    testOnly:true,
+
+    
 
     callback: ({ interaction, args }) => {
         //Botaktion
-        const time = args[0]
-        const after = parseInt(args[1], 10) * 1000; // Convert time to milliseconds
-        const channel = args[2]
-        const message = args[3]
-        const date = args[4]
-        const user = args[5]
-        const interval = args[6]
-        const reminder = args.slice(1).join(' ');
+        console.log(interaction.options.getString('after')) //bei 'get' immer type hinschreiben
+        const time = interaction.options.getString('time')
+        const after = parseInt(interaction.options.getString('after')); // Convert time to milliseconds
+        const channel = interaction.options.getString('channel')
+        const message = interaction.options.getString('message')
+        const date = interaction.options.getString('date')
+        const user = interaction.options.getUser('user')
+        const interval = interaction.options.getString('interval')
+        //const reminder = args.slice(1).join(' ');
 
-        if (!isNaN(after) && reminder) {
+        if (!isNaN(after) /*&& reminder*/) {
             setTimeout(() => {
-            message.channel.send(`Erinnerung: ${reminder}`)
+            interaction.channel.send(`Erinnerung: ${after}`)
             }, after);
-            message.channel.send(`Erinnerung gesetzt in: ${after / 1000/60} Minuten.`);
+            interaction.channel.send(`Erinnerung gesetzt in: ${formatMinutes(after)} Minuten.`);
         } else {
-            message.channel.send(`! Ungültige Eingabe.`);
+            interaction.channel.send(`! Ungültige Eingabe.`);
         }
     }
 }
