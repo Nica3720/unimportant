@@ -72,9 +72,9 @@ module.exports = {
 
         if (!isNaN(after) /*&& reminder*/) {
             setTimeout(() => {
-            interaction.channel.send(`Erinnerung: ${after}`)
+            interaction.channel.send(`Erinnerung: ${message}`)
             }, after);
-            interaction.channel.send(`Erinnerung gesetzt in: ${formatMinutes(after)} Minuten.`);
+            interaction.channel.send(`Erinnerung gesetzt in: ${formatMinutes(after)}.`);
         } else {
             interaction.channel.send(`! Ungültige Eingabe.`);
         }
