@@ -18,11 +18,11 @@ module.exports =  {
             choices: [
                 {
                     name: 'test2',
-                    value: 'test2'
+                    value: 'test2valuechoice1'
                 },
                 {
                     name: 'test3',
-                    value: 'test3'
+                    value: 'test3valuechoice2'
                 },
                 // festgelegte Antworten in Option
             ]
