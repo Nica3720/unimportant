@@ -20,7 +20,7 @@ module.exports = {
             required: false, 
         },
         {
-            name: 'after', //wenn after = null mag er nicht... / string nicht nur bei leerzeichen sondern auch ohne trennen
+            name: 'after', // geht wieder 
             description: 'number and time specification (d; h; m; s)',
             type: 3,
             required: false,
@@ -56,7 +56,7 @@ module.exports = {
             required: false,
         },
         {
-            name: 'timezone',
+            name: 'timezone', //will nich updaten -.-
             description: 'use international shortcuts (UTC)',
             type: 3,
             required: false,
@@ -194,36 +194,34 @@ module.exports = {
         //Botaktion
         //console.log(interaction.options.getString('after')) //bei 'get' immer type hinschreiben
         const timezone = interaction.options.getString('timezone');
-        console.log(timezone);
         const OriginalDate = new Date();
             const OriginalYear = OriginalDate.getFullYear();
             const OriginalMonth = OriginalDate.getMonth(); // Januar ist Monat Null
             const OriginalDay = OriginalDate.getDate();
-            const OriginalHour = OriginalDate.getHours() + parseInt(choices) || OriginalDate.getHours() + 2
+            const OriginalHour = OriginalDate.getHours() + 2;
+            //const OriginalHour = OriginalDate.getHours() + parseInt(choices) || OriginalDate.getHours() + 2
             const OriginalMinute = OriginalDate.getMinutes();
             const OriginalSeconds = OriginalDate.getSeconds();
 
         const time = interaction.options.getString('time')
             //const [datePart, timePart] = time.split(' '); // Aufteilen in Datum und Uhrzeit
             //const [givenDay, givenMonth, givenYear] = datePart.split('.'); // Aufteilen des Datums in Tag, Monat und Jahr
+            let timeAfterMilliseconds
+            //let givenHours
+            //let givenMinutes
+            let hourDiff
             if (time) {
-                const [givenHours, givenMinutes, givenSeconds] = time.split(':'); // Aufteilen der Uhrzeit in Stunden, Minuten und Sekunden
-            
+                var [givenHours, givenMinutes, givenSeconds] = time.split(':'); // Aufteilen der Uhrzeit in Stunden, Minuten und Sekunden
+
                 const hourDiff = givenHours - OriginalHour
                 const minuteDiff = givenMinutes - OriginalMinute
                 const secondDiff = givenSeconds - OriginalSeconds
 
-                const timeAfterMilliseconds = (hourDiff * 3600000 + minuteDiff * 60000 + secondDiff * 1000);
-                console.log(timeAfterMilliseconds)}
-        //const alarmDateTime = new Date();
-            //alarmDateTime.setFullYear(2023);
-            //alarmDateTime.setMonth(9); //Null-basiert; Sprich: Januar = Monat 0
-            //alarmDateTime.setDate(18);
-            //alarmDateTime.setHours(12);
-            //alarmDateTime.setMinutes(11);
-            //alarmDateTime.setSeconds(0);
-        //const currentDateTime = new Date();
-        //const timeUntilAlarm = alarmDateTime - currentDateTime;
+                timeAfterMilliseconds = (hourDiff * 3600000 + minuteDiff * 60000 + secondDiff * 1000);
+                //console.log(timeAfterMilliseconds)
+            }
+            //console.log(time.split(':'))
+            //console.log(givenMinutes)
         let afterInTime 
         const after = parseInt(interaction.options.getString('after')); // Convert time to milliseconds
         //console.log(after)
@@ -238,12 +236,22 @@ module.exports = {
                 const secondSum = OriginalSeconds + parseInt(afterSeconds)
 
                  afterInTime = (`${hourSum.toString()}:${minuteSum.toString().padStart(2, '0')}:${secondSum.toString().padStart(2, '0')}`);
+                 var [afterNumber, afterUnit] = afterString.split(' ');
             }
-            const [afterNumber, afterUnit] = afterString.split(' ');
-
+            
         const userChannel = interaction.options.getChannel('channel') || interaction.channel;
         const message = interaction.options.getString('message');
         const date = interaction.options.getString('date');
+            if (date) {
+                var [givenDay, givenMonth, givenYear] = date.split('.')
+                //if (time) {
+                    //const givenDateFormat = `${givenYear}-${givenMonth}-${givenDay}T${givenHours-2}:${givenMinutes}:${givenSeconds}.000Z`
+                    //var dateTimeDiffInMs = Math.abs(givenDateFormat - OriginalDate);
+                    //console.log(OriginalDate.get())
+                    //console.log(OriginalDate)
+                    //console.log(givenDateFormat)
+                    //console.log(dateTimeDiffInMs)}
+            }
         const user = interaction.options.getMentionable('user');
         const interval = interaction.options.getString('interval');
         //const reminder = args.slice(1).join(' ');
@@ -270,8 +278,32 @@ module.exports = {
                     reminderMessage += `\n**Gewähltes Intervall:** ${interval}`
                 }
 
+        if (date) {
+            const dateDiffY = givenYear - OriginalYear;
+            const dateDiffM = givenMonth - OriginalMonth;
+            const dateDiffD = givenDay - OriginalDay;
+            const midnightDiffH = 23 - OriginalHour;
+            const midnightDiffMin = 59 - OriginalMinute;
+            const midnightDiffS = 60 - OriginalSeconds;
+
+            const midnightDiff = (midnightDiffS * 1000) + (midnightDiffMin * 60000) + (midnightDiffH * 3600000)
+            const timeAspects = midnightDiff + (givenHours * 3600000) + (givenMinutes * 60000) + (givenSeconds * 1000)
+            const temporaryMonthEndDiff = 31 - OriginalDay;
+            if (OriginalMonth === '1' || OriginalMonth === '3' || OriginalMonth === '5' || OriginalMonth === '7' || OriginalMonth === '8' || )
+
+            console.log(OriginalDate)
+            console.log(OriginalMonth)
+            //console.log(timeAspects)
+            //console.log(midnightDiffH, midnightDiffMin, midnightDiffS)
+        }
+
         if (time && after) {
             interaction.channel.send(`:grey_exclamation: Bitte verwende nur entweder \`time\` __oder__ \`after\`.`);
+            return;
+        };
+
+        if (after && date) {
+            interaction.channel.send(`:grey_exclamation: Bitte verwende nur entweder \`date\` __oder__ \`after\`. Beides zusammen ist nicht möglich. Wenn du \`date\` nutzen willst, tue dies in Kombination mit \`time\`.`);
             return;
         };
         
@@ -305,7 +337,7 @@ module.exports = {
                     return;
                 };
                 if (afterUnit === 'h' || afterUnit === 'hours' || afterUnit === 'Stunden') {
-                    const afterInMs = afterNumber * 360000;
+                    const afterInMs = afterNumber * 3600000;
                     setTimeout(() => {
                         userChannel.send(reminderMessage)
                     }, (afterNumber * 3600000));
@@ -313,24 +345,21 @@ module.exports = {
                     return;
                 };
                 if (afterUnit === 'd' || afterUnit === 'days' || afterUnit === 'Tage') {
-                    const afterInMs = afterNumber * 360000 * 24;
+                    const afterInMs = afterNumber * 3600000 * 24;
                     setTimeout(() => {
                         userChannel.send(reminderMessage)
                     }, (afterNumber * 3600000 * 24));
                     interaction.channel.send(`Erinnerung gesetzt in ${formatHours(afterInMs)}. :squid: `);
                     return;
                 }
-            } else {
-                interaction.channel.send(`:grey_exclamation: Ungültige Eingabe.`);
-                return;
             }
         if (time) {
-            console.log(interaction.options.getString('time'))
             if (timeAfterMilliseconds > 0) {
                 setTimeout(() => {
                     userChannel.send(reminderMessage);
                 }, timeAfterMilliseconds);
                 interaction.channel.send(`Erinnerung gesetzt in ${formatHours(timeAfterMilliseconds)}. :squid:`);
+                return;
             } else {
                 interaction.channel.send(':grey_exclamation: Bitte verwende eine Zeit, die in der Zukunft liegt.');
                 return;
