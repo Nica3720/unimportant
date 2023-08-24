@@ -302,6 +302,7 @@ module.exports = {
                 interaction.channel.send(`:grey_exclamation: Bitte verwende eine gültige Monatsangabe zwischen 01 und 12.\n>>> Januar = 01\nFebruar = 02\nMärz = 03\nApril = 04\nMai = 05\nJuni = 06\nJuli = 07\nAugust = 08\nSeptember = 09\nOktober = 10\nNovember = 11\nDezember = 12`);
             return;
             };
+            //swanttosave
             const finalMonthEndDiffMs = finalMonthEndDiff * 86400000;
         const dayAspects = (finalMonthEndDiffMs) + (parseInt(givenDay) * 86400000);
             const yearDiff = parseInt(givenYear) - parseInt(OriginalYear);
