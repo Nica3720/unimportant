@@ -212,7 +212,9 @@ module.exports = {
             let hourDiff
             if (time) {
                 var [givenHours, givenMinutes, givenSeconds] = time.split(':'); // Aufteilen der Uhrzeit in Stunden, Minuten und Sekunden
-
+                if (givenSeconds === undefined) {
+                    var givenSeconds = parseInt('00');
+                }
                 const hourDiff = givenHours - OriginalHour
                 const minuteDiff = givenMinutes - OriginalMinute
                 const secondDiff = givenSeconds - OriginalSeconds
@@ -288,7 +290,22 @@ module.exports = {
             const schaltjahr = '2024'
 
             const midnightDiff = (midnightDiffS * 1000) + (midnightDiffMin * 60000) + (midnightDiffH * 3600000)
-            const timeAspects = parseInt(midnightDiff) + (givenHours * 3600000) + (givenMinutes * 60000) + (givenSeconds * 1000)
+            if (givenDay === OriginalDay && givenMonth === ('0'+(OriginalMonth + 1)) && givenYear === OriginalYear) {
+                var sameDayH = givenHours - OriginalHour + 2;
+                var sameDayMin = givenMinutes - OriginalMinute;
+                var sameDayS = givenSeconds - OriginalSeconds;
+                var timeAspects = (sameDayH * 3600000) + (sameDayMin * 60000) + (sameDayS * 1000)
+            } else {
+                var timeAspects = parseInt(parseInt(midnightDiff) + (givenHours * 3600000) + (givenMinutes * 60000) + (givenSeconds * 1000));
+            }
+            console.log(dateMsDiffComplete)
+            console.log(`Eingabe:\ntime: ${time} date: ${date}\n_________`)
+            console.log(givenDay, OriginalDay)
+            console.log(givenMonth, '0'+(OriginalMonth + 1))
+            console.log(givenYear, OriginalYear)
+            console.log(sameDayH, sameDayMin, sameDayS)
+            console.log(`time ${timeAspects} day ${dayAspects} month ${monthAspects}`)
+
             const temporaryMonthEndDiff = 31 - (OriginalDay + 1);
             if (OriginalMonth === parseInt('0') || OriginalMonth === parseInt('2') || OriginalMonth === parseInt('4') || OriginalMonth === parseInt('6') || OriginalMonth === parseInt('7') ||  OriginalMonth === parseInt('9') || OriginalMonth === parseInt('11')) {
                 var finalMonthEndDiff = temporaryMonthEndDiff
@@ -302,9 +319,9 @@ module.exports = {
                 interaction.channel.send(`:grey_exclamation: Bitte verwende eine gültige Monatsangabe zwischen 01 und 12.\n>>> Januar = 01\nFebruar = 02\nMärz = 03\nApril = 04\nMai = 05\nJuni = 06\nJuli = 07\nAugust = 08\nSeptember = 09\nOktober = 10\nNovember = 11\nDezember = 12`);
             return;
             };
-            //swanttosave
             const finalMonthEndDiffMs = finalMonthEndDiff * 86400000;
-        const dayAspects = (finalMonthEndDiffMs) + (parseInt(givenDay) * 86400000);
+            var dayAspects = (finalMonthEndDiffMs) + (parseInt(givenDay) * 86400000);
+            //console.log(dayAspects);
             const yearDiff = parseInt(givenYear) - parseInt(OriginalYear);
             if (yearDiff > 1 || yearDiff < 0) {
                 interaction.channel.send(`:grey_exclamation: Bitte verwende ein Datum, das nicht mehr als 24 Tage in der Zukunft liegt.`);
@@ -333,24 +350,17 @@ module.exports = {
             } else {
                 var daysFeb = parseInt(includedFebruary.length) * 28;
             }
-            const monthAspects = (days31 + days30 + daysFeb) * 86400000;
-            console.log(monthAspects)
-            console.log(dayAspects)
-            console.log(timeAspects)
-            const dateMsDiffComplete = parseInt(monthAspects) + parseInt(dayAspects) + parseInt(timeAspects)
-            console.log(dateMsDiffComplete)
+            var monthAspects = (days31 + days30 + daysFeb) * 86400000;
+            //console.log(monthAspects)
+            //console.log(dayAspects)
+            //console.log(timeAspects)
+            var dateMsDiffComplete = parseInt(monthAspects) + parseInt(dayAspects) + parseInt(timeAspects)
+            //console.log(dateMsDiffComplete)
+            //console.log(`giv sec ${givenSeconds}`);
             //console.log(skippedMonths);
 
-            // Months between start and end
-            //const monthsBetween = months.slice(startIndex + 1, endIndex);
-            //interaction.reply(`Months between ${startMonth} and ${endMonth}: ${monthsBetween.join(', ')}`);},
-            //const skippedMonths = parseInt(givenMonth) - (parseInt(OriginalMonth) + 2);
-            //console.log(`givenmonth ${givenMonth}, original: ${OriginalMonth}`)
             //console.log(`temp. ${temporaryMonthEndDiff}, final: ${finalMonthEndDiff}, original: ${OriginalMonth}`)
             console.log(OriginalDate)
-            //console.log(timeAspects)
-            //console.log(dayAspects)
-            //console.log(finalMonthEndDiffMs)
             //console.log(midnightDiffH, midnightDiffMin, midnightDiffS)
         }
 
@@ -368,6 +378,20 @@ module.exports = {
             interaction.channel.send(`:grey_exclamation: Bitte gib \`time\` oder \`after\` an, um einen reminder zu setzen.`);
             return;
         }
+
+        if (date && time) {
+            if (dateMsDiffComplete > 2073000000) {
+                interaction.channel.send(':grey_exclamation: Bitte verwende einen Zeitraum, der weniger als 24 Tage lang ist.');
+                return;
+            } else if (dateMsDiffComplete > 0) {
+                setTimeout(() => {
+                    userChannel.send(reminderMessage);
+                }, dateMsDiffComplete);
+                interaction.channel.send(`Erinnerung gesetzt am ${givenDay}.${givenMonth}.${givenYear} um ${givenHours}:${givenMinutes}:${givenSeconds} Uhr. :squid:`);
+                return;
+            } else {
+                interaction.channel.send(':grey_exclamation: Bitte verwende eine Zeit, die in der Zukunft liegt.');
+                return;}}
 
         if (after) {
                 if (afterUnit === 's' || afterUnit === 'seconds' || afterUnit === 'Sekunden' || afterUnit === 'Sek' || afterUnit === 'sek') {
