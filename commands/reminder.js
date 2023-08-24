@@ -285,15 +285,71 @@ module.exports = {
             const midnightDiffH = 23 - OriginalHour;
             const midnightDiffMin = 59 - OriginalMinute;
             const midnightDiffS = 60 - OriginalSeconds;
+            const schaltjahr = '2024'
 
             const midnightDiff = (midnightDiffS * 1000) + (midnightDiffMin * 60000) + (midnightDiffH * 3600000)
-            const timeAspects = midnightDiff + (givenHours * 3600000) + (givenMinutes * 60000) + (givenSeconds * 1000)
-            const temporaryMonthEndDiff = 31 - OriginalDay;
-            if (OriginalMonth === '1' || OriginalMonth === '3' || OriginalMonth === '5' || OriginalMonth === '7' || OriginalMonth === '8' || )
+            const timeAspects = parseInt(midnightDiff) + (givenHours * 3600000) + (givenMinutes * 60000) + (givenSeconds * 1000)
+            const temporaryMonthEndDiff = 31 - (OriginalDay + 1);
+            if (OriginalMonth === parseInt('0') || OriginalMonth === parseInt('2') || OriginalMonth === parseInt('4') || OriginalMonth === parseInt('6') || OriginalMonth === parseInt('7') ||  OriginalMonth === parseInt('9') || OriginalMonth === parseInt('11')) {
+                var finalMonthEndDiff = temporaryMonthEndDiff
+            } else if ( OriginalMonth === parseInt('3') || OriginalMonth === parseInt('5') || OriginalMonth === parseInt('8') || OriginalMonth === parseInt('10')) {
+                var finalMonthEndDiff = temporaryMonthEndDiff - 1
+            } else if ( OriginalMonth === parseInt('01') && schaltjahr) {
+                var finalMonthEndDiff = temporaryMonthEndDiff - 2
+            } else if ( OriginalMonth === parseInt('01') && !schaltjahr) {
+                var finalMonthEndDiff = temporaryMonthEndDiff - 3
+            } else {
+                interaction.channel.send(`:grey_exclamation: Bitte verwende eine gültige Monatsangabe zwischen 01 und 12.\n>>> Januar = 01\nFebruar = 02\nMärz = 03\nApril = 04\nMai = 05\nJuni = 06\nJuli = 07\nAugust = 08\nSeptember = 09\nOktober = 10\nNovember = 11\nDezember = 12`);
+            return;
+            };
+            const finalMonthEndDiffMs = finalMonthEndDiff * 86400000;
+        const dayAspects = (finalMonthEndDiffMs) + (parseInt(givenDay) * 86400000);
+            const yearDiff = parseInt(givenYear) - parseInt(OriginalYear);
+            if (yearDiff > 1 || yearDiff < 0) {
+                interaction.channel.send(`:grey_exclamation: Bitte verwende ein Datum, das nicht mehr als 24 Tage in der Zukunft liegt.`);
+            return;
+            }
+            const startMonth = parseInt(OriginalMonth) + 1;
+            const endMonth = parseInt(givenMonth) - 1;
+            const months = [
+                "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"
+            ]
+            const skippedMonths = months.slice(startMonth, endMonth);
+            const month30 = ["April", "Juni", "September", "November"];
+            const month31 = ["Januar", "März", "Mai", "Juli", "August", "Oktober", "Dezember"];
+            const monthFebruary = ["Februar"];
+            const included31 = skippedMonths.filter(months => month31.includes(months));
+            const included30 = skippedMonths.filter(months => month30.includes(months));
+            const includedFebruary = skippedMonths.filter(months => monthFebruary.includes(months));
+            //console.log(`Monate mit 31 Tagen: ${included31.join(', ')}`);
+            //console.log(`Anzahl der Monate mit 31 Tagen: ${month31.length}`);
+            //console.log(`Monate mit 30 Tagen: ${included30.join(', ')}`);
+            //console.log(`Anzahl der Monate mit 30 Tagen: ${month30.length}`);
+            const days31 = parseInt(included31.length) * 31
+            const days30 = parseInt(included30.length) * 30
+            if (givenYear === schaltjahr) {
+                var daysFeb = parseInt(includedFebruary.length) * 29;
+            } else {
+                var daysFeb = parseInt(includedFebruary.length) * 28;
+            }
+            const monthAspects = (days31 + days30 + daysFeb) * 86400000;
+            console.log(monthAspects)
+            console.log(dayAspects)
+            console.log(timeAspects)
+            const dateMsDiffComplete = parseInt(monthAspects) + parseInt(dayAspects) + parseInt(timeAspects)
+            console.log(dateMsDiffComplete)
+            //console.log(skippedMonths);
 
+            // Months between start and end
+            //const monthsBetween = months.slice(startIndex + 1, endIndex);
+            //interaction.reply(`Months between ${startMonth} and ${endMonth}: ${monthsBetween.join(', ')}`);},
+            //const skippedMonths = parseInt(givenMonth) - (parseInt(OriginalMonth) + 2);
+            //console.log(`givenmonth ${givenMonth}, original: ${OriginalMonth}`)
+            //console.log(`temp. ${temporaryMonthEndDiff}, final: ${finalMonthEndDiff}, original: ${OriginalMonth}`)
             console.log(OriginalDate)
-            console.log(OriginalMonth)
             //console.log(timeAspects)
+            //console.log(dayAspects)
+            //console.log(finalMonthEndDiffMs)
             //console.log(midnightDiffH, midnightDiffMin, midnightDiffS)
         }
 
